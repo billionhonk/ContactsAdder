@@ -15,7 +15,7 @@ public class contAdderUI extends JFrame{
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1000, 1000);
     String[] options = {"CAMS"};
-    ImageIcon test = new ImageIcon("testImg.png");
+    //ImageIcon test = new ImageIcon("testImg.png");
 
     //Containers of components
     JPanel home = new JPanel();

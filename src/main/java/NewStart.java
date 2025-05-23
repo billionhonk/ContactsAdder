@@ -48,163 +48,159 @@ public class NewStart {
 
     public static void handleState(State state) {
         switch (state) {
-            case FETCH:
-                System.out.println("Loading Firebase...");
-                try {
-                    FirebaseInitializer.initialize();
-                } catch (IOException e) {
-                    System.out.println("Failed to initialize Firebase: " + e.getMessage());
-                    return;
+        /**
+        * GET DATA FROM FIREBASE 
+        */
+        case FETCH:
+            System.out.println("Loading Firebase...");
+
+            try {
+                FirebaseInitializer.initialize();
+            } catch (IOException e) {
+                System.out.println("Failed to initialize Firebase: " + e.getMessage());
+                return;
+            }
+
+            // Retrieve data from Firebase Realtime Database
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
+
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        Person person = child.getValue(Person.class);
+
+                        // Check if duplicate email
+                        if (emails.contains(person.getEmail())) {
+                            System.out.println("- Person with email: " + person.getEmail() + " already exists in the database.");
+                        
+                        // Check if person is valid
+                        } else if (person != null) {
+                            peopleToCSV.add(person);
+                            emails.add(person.getEmail());
+                            
+                            System.out.println("+ Fetched person: " + person.getEmail() + ", " + person.getFirstName() + " " + person.getLastName());
+                        }
+                    }
+                
+                    // Set the current state to AWAITING_FILE after fetching data
+                    currentState = State.AWAITING_FILE;
+                    handleState(currentState);
                 }
 
-                // Retrieve data from Firebase Realtime Database
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
-                emails = new ArrayList<>();
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    System.err.println("Firebase read failed: " + error.getMessage());
+                }
+            });
+            break;
+        
+        /**
+        * WAITING FOR CSV UPLOAD
+        */
+        case AWAITING_FILE:
+            System.out.println("Awaiting file...");
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("Opening file chooser...");
 
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            Person person = child.getValue(Person.class);
-                            if (person != null && !emails.contains(person.getEmail())) {
-                                if (emails.contains(person.getEmail()))
-                                    System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
-                                peopleToCSV.add(person);
+                // Prompt the user to select a CSV file via file chooser
+                JFileChooser fileChooser = new JFileChooser();
+                System.out.println("File chooser opened.");
 
-                                // Add to fullNames to avoid duplicates.. subclass of Person --> FullName
-                                emails.add(person.getEmail());
-                                System.out.println("Fetched person: " + person.getEmail() + ", " + person.getFirstName() + " " + person.getLastName());
-                            }
-                        }
-                    
-                        // Set the current state to AWAITING_FILE after fetching data
-                        currentState = State.AWAITING_FILE;
-                        handleState(currentState);
-                    }
+                // Tell the user to select their Google Contacts CSV file
+                fileChooser.setDialogTitle("Select your Google Contacts CSV file");
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        System.err.println("Firebase read failed: " + error.getMessage());
-                    }
+                // Restrain to csv
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                fileChooser.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
+
+                // Start at home directory
+                String userHome = System.getProperty("user.home");
+
+                // Check if the OS is Mac to use Downloads (for greater convenience)
+                String os = System.getProperty("os.name").toLowerCase();
+                File initialDir;
+                if (os.contains("mac")) {
+                    initialDir = new File(userHome, "Downloads");
+                } else {
+                    initialDir = new File(userHome);
+                }
+                fileChooser.setCurrentDirectory(initialDir);
+                fileChooser.setSelectedFile(new File("contacts.csv")); // Set default file name
+                int result = fileChooser.showOpenDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    csvFile = fileChooser.getSelectedFile();
+                    // Set the current state to PROCESSING_CSV after selecting the file
+                    currentState = State.PROCESSING_CSV;
+                    handleState(currentState);
+                }
                 });
-                break;
-            case AWAITING_FILE:
-                System.out.println("Awaiting file...");
-                SwingUtilities.invokeLater(() -> {
-                    System.out.println("Opening file chooser...");
 
-                    // Prompt the user to select a CSV file via file chooser
-                    JFileChooser fileChooser = new JFileChooser();
-                    System.out.println("File chooser opened.");
+            break;
+        
+        /**
+         * READ DATA FROM UPLOADED CSV
+         */
+        case PROCESSING_CSV:
+            System.out.println("Processing CSV...");
 
-                    // Tell the user to select their Google Contacts CSV file
-                    fileChooser.setDialogTitle("Select your Google Contacts CSV file");
+            try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+                List<String[]> rows = reader.readAll();
+                for (String[] row : rows) {
+                    Person person = createPersonFromCSVRow(row);
+                    
+                    // Skip if the person is null
+                    if (person == null) continue;
 
-                    // Restrain to csv
-                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fileChooser.setAcceptAllFileFilterUsed(false);
-                    fileChooser.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("CSV files", "csv"));
+                    // Check if duplicate email
+                    if (emails.contains(person.getEmail())) {
+                        System.out.println("- Person with email: " + person.getEmail() + " already exists in the database.");
+                    
+                    // Check if the email ends with @lbschools.net
+                    } else if (person.getEmail().endsWith("@lbschools.net")) {
+                        newPeople.add(person);
+                        emails.add(person.getEmail());
 
-                    // Start at home directory
-                    String userHome = System.getProperty("user.home");
-
-                    // Check if the OS is Mac to use Downloads (for greater convenience)
-                    String os = System.getProperty("os.name").toLowerCase();
-                    File initialDir;
-                    if (os.contains("mac")) {
-                        initialDir = new File(userHome, "Downloads");
-                    } else {
-                        initialDir = new File(userHome);
+                        System.out.println("+ Adding person with email: " + person.getEmail());
                     }
-                    fileChooser.setCurrentDirectory(initialDir);
-                    fileChooser.setSelectedFile(new File("contacts.csv")); // Set default file name
-                    int result = fileChooser.showOpenDialog(null);
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        csvFile = fileChooser.getSelectedFile();
-                        // Set the current state to PROCESSING_CSV after selecting the file
-                        currentState = State.PROCESSING_CSV;
-                        handleState(currentState);
-                    }
-                    });
-
-                break;
-            case PROCESSING_CSV:
-                System.out.println("Processing CSV...");
-                emails = new ArrayList<>();
-
-                try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
-                            List<String[]> rows = reader.readAll();
-                            for (String[] row : rows) {
-                                Person person = createPersonFromCSVRow(row);
-                                
-                                // Skip if the person is null
-                                if (person == null) {
-                                    continue;
-                                }
-
-                                // Check if the email ends with @lbschools.net 
-                                // TODO: check if the email is already in the arraylist
-                                if (person.getEmail().endsWith("@lbschools.net") && !emails.contains(person.getEmail())) {
-                                    // nested for loop to check if the person is already in the arraylist
-                                    // boolean alreadyExists = false;
-                                    // for (Person p : peopleToCSV) {
-                                    //     if (p.getEmail().equals(person.getEmail())) {
-                                    //         System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
-                                    //         alreadyExists = true;
-
-                                    //         // Remove from peopleToCSV to avoid duplicates
-                                    //         for (int i = 0; i < peopleToCSV.size(); i++) {
-                                    //             if (peopleToCSV.get(i).getEmail().equals(person.getEmail())) {
-                                    //                 peopleToCSV.remove(i);
-                                    //                 System.out.println("Removed " + person.toString());
-                                    //                 break;
-                                    //             }
-                                    //         }
-                                    //         break;
-                                    //     }
-                                    // }
-
-                                    if (emails.contains(person.getEmail())) {
-                                        System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
-                                    } else {
-                                        // add person to the arraylist
-                                        System.out.println("Adding person with email: " + person.getEmail());
-                                        
-                                        // Add to newPeople to add later to firebase after all are added
-                                        newPeople.add(person);
-                                    }
-
-                                }
-                            }
-
-                            // Set the current state to PROCESSING_CSV after reading the file
-                            currentState = State.PUSH;
-                            System.out.println("CSV file read successfully. Number of people: " + peopleToCSV.size());
-                            handleState(currentState);
-                        } catch (Exception e) {
-                            System.out.println("Something went wrong while reading the CSV file.");
-                            e.printStackTrace();
-                        }
-                break;
-            case PUSH:
-                System.out.println("Uploading...");
-                DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference("people");
-                // Add each person to the Firebase Realtime Database
-                for (Person person: newPeople) {
-                    peopleFB.push().setValueAsync(person);
-                    System.out.println("Added person to Firebase: " + person.getEmail());
                 }
 
-                currentState = State.DONE;
+                // Set the current state to PROCESSING_CSV after reading the file
+                currentState = State.PUSH;
+                System.out.println("CSV file read successfully. Number of people: " + peopleToCSV.size());
                 handleState(currentState);
-                break;
-            case DONE:
-                createCSV(peopleToCSV);
-                System.out.println("Done.");
-                latch.countDown();
-                break;
-        }
-    }
+            } catch (Exception e) {
+                System.out.println("Something went wrong while reading the CSV file.");
+                e.printStackTrace();
+            }
+            break;
+        
+        /**
+         * UPLOADING CSV TO FIREBASE
+         */
+        case PUSH:
+            System.out.println("Uploading...");
+            DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference("people");
+            // Add each person to the Firebase Realtime Database
+            for (Person person: newPeople) {
+                peopleFB.push().setValueAsync(person);
+                System.out.println("Added person to Firebase: " + person.getEmail());
+            }
+
+            currentState = State.DONE;
+            handleState(currentState);
+            break;
+        
+        /**
+         * CSV DOWNLOADED
+         */
+        case DONE:
+            createCSV(peopleToCSV);
+            System.out.println("Done.");
+            latch.countDown();
+            break;
+    }}
 
     // Extract the contact information from the CSV file 
     // and create a Person object for each contact

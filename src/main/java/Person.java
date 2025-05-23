@@ -83,4 +83,8 @@ public class Person {
     public void setNameSuffix(String nameSuffix) {
         this.nameSuffix = nameSuffix;
     }
+
+    public String getFullName() {
+        return firstName + " " + middleName + " " + lastName;
+    }
 }

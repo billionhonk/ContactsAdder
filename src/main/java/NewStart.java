@@ -17,9 +17,15 @@ import java.io.FileInputStream;
 // Use countdownlatch to wait for firebase to load
 import java.util.concurrent.CountDownLatch;
 
+import java.awt.Desktop;
+import java.io.FileWriter;
+import java.io.IOException;
+import com.opencsv.CSVWriter;
+
 public class NewStart {
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
-    public static ArrayList<Person> people = new ArrayList<>();
+    public static ArrayList<Person> peopleToCSV = new ArrayList<>();
+    public static ArrayList<String> fullNames = new ArrayList<>(); // people in the database --> avoid duplicates
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
     private static CountDownLatch latch = new CountDownLatch(1);
 
@@ -59,11 +65,13 @@ public class NewStart {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             Person person = child.getValue(Person.class);
                             if (person != null) {
-                                people.add(person);
-                                System.out.println("Fetched person: " + person.getEmail());
+                                peopleToCSV.add(person);
+                                // Add to fullNames to avoid duplicates.. subclass of Person --> FullName
+                                fullNames.add(person.getFirstName() + " " + person.getLastName());
+                                System.out.println("Fetched person: " + person.getEmail() + ", " + person.getFirstName() + " " + person.getLastName());
                             }
                         }
-
+                    
                         // Set the current state to AWAITING_FILE after fetching data
                         currentState = State.AWAITING_FILE;
                         handleState(currentState);
@@ -128,20 +136,40 @@ public class NewStart {
 
                                 // Check if the email ends with @lbschools.net 
                                 // TODO: check if the email is already in the arraylist
-                                if (person.getEmail().endsWith("@lbschools.net") && !people.contains(person)) {
-                                    // add person to the arraylist
-                                    System.out.println("Adding person with email: " + person.getEmail());
-                                    people.add(person);
-                                    
-                                    // Add to newPeople to add later to firebase after all are added
-                                    newPeople.add(person);
+                                if (person.getEmail().endsWith("@lbschools.net") && !peopleToCSV.contains(person)) {
+                                    // nested for loop to check if the person is already in the arraylist
+                                    boolean alreadyExists = false;
+                                    for (Person p : peopleToCSV) {
+                                        if (p.getEmail().equals(person.getEmail())) {
+                                            System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
+                                            alreadyExists = true;
+
+                                            // Remove from peopleToCSV to avoid duplicates
+                                            for (int i = 0; i < peopleToCSV.size(); i++) {
+                                                if (peopleToCSV.get(i).getEmail().equals(person.getEmail())) {
+                                                    peopleToCSV.remove(i);
+                                                    System.out.println("Removed person with email: " + person.getEmail() + " from the list.");
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+
+                                    if (!alreadyExists) {
+                                        // add person to the arraylist
+                                        System.out.println("Adding person with email: " + person.getEmail());
+                                        
+                                        // Add to newPeople to add later to firebase after all are added
+                                        newPeople.add(person);
+                                    }
 
                                 }
                             }
 
                             // Set the current state to PROCESSING_CSV after reading the file
                             currentState = State.PUSH;
-                            System.out.println("CSV file read successfully. Number of people: " + people.size());
+                            System.out.println("CSV file read successfully. Number of people: " + peopleToCSV.size());
                             handleState(currentState);
                         } catch (Exception e) {
                             System.out.println("Something went wrong while reading the CSV file.");
@@ -161,6 +189,7 @@ public class NewStart {
                 handleState(currentState);
                 break;
             case DONE:
+                createCSV(peopleToCSV);
                 System.out.println("Done.");
                 latch.countDown();
                 break;
@@ -190,5 +219,34 @@ public class NewStart {
 
         System.out.println("Creating person with first name: " + firstName + ", middle name: " + middleName + ", last name: " + lastName + ", email: " + email);
         return new Person(firstName, middleName, lastName, email, namePrefix, nameSuffix);
+    }
+
+    // Create a CSV file with the contacts from Firebase
+    public static void createCSV(ArrayList<Person> people) {
+        // HEADER: First Name,Middle Name,Last Name,Phonetic First Name,Phonetic Middle Name,Phonetic Last Name,Name Prefix,Name Suffix,Nickname,File As,Organization Name,Organization Title,Organization Department,Birthday,Notes,Photo,Labels,E-mail 1 - Label,E-mail 1 - Value
+        String[] header = {"First Name", "Middle Name", "Last Name", "Phonetic First Name", "Phonetic Middle Name", "Phonetic Last Name", "Name Prefix", "Name Suffix", "Nickname", "File As", "Organization Name", "Organization Title", "Organization Department", "Birthday", "Notes", "Photo", "Labels", "E-mail 1 - Label", "E-mail 1 - Value"};
+
+        // Create a new CSV file
+        File csvFile = new File("ContactsAdder - New Contacts.csv");
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile))) {
+            // Write the header to the CSV file
+            writer.writeNext(header);
+
+            // Write each person to the CSV file
+            for (Person person : people) {
+                String[] row = {person.getFirstName(), person.getMiddleName(), person.getLastName(), "", "", "", person.getNamePrefix(), person.getNameSuffix(), "", "", "", "", "", "", "", "", "", "", person.getEmail()};
+                writer.writeNext(row);
+            }
+        } catch (IOException e) {
+            System.out.println("Failed to create CSV file: " + e.getMessage());
+        }
+        System.out.println("CSV file created successfully: " + csvFile.getAbsolutePath());
+        // Open the CSV file in the default application
+        try {
+            Desktop.getDesktop().open(csvFile);
+        } catch (IOException e) {
+            System.out.println("Failed to open CSV file: " + e.getMessage());
+        }
+
     }
 }

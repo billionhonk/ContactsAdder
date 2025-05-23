@@ -8,6 +8,11 @@ public class Person {
     private String namePrefix = "";
     private String nameSuffix = "";
 
+    // No-arg constructor for Firebase
+    public Person() {
+        // Default constructor for Firebase
+    }
+
     // Constructors with overloading
     public Person(String firstName, String middleName, String lastName, String email, String namePrefix, String nameSuffix) {
         this.firstName = firstName;

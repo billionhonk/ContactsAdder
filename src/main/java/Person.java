@@ -87,4 +87,11 @@ public class Person {
     public String getFullName() {
         return firstName + " " + middleName + " " + lastName;
     }
+
+    //ToString method
+    @Override
+    public String toString() {
+        return namePrefix + " " + firstName + " " + middleName + " " + lastName + " " + nameSuffix + 
+                "| Email: " + email;
+    }
 }

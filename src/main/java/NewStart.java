@@ -148,7 +148,7 @@ public class NewStart {
                                             for (int i = 0; i < peopleToCSV.size(); i++) {
                                                 if (peopleToCSV.get(i).getEmail().equals(person.getEmail())) {
                                                     peopleToCSV.remove(i);
-                                                    System.out.println("Removed person with email: " + person.getEmail() + " from the list.");
+                                                    System.out.println("Removed " + person.toString());
                                                     break;
                                                 }
                                             }

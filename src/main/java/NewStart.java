@@ -46,7 +46,7 @@ public class NewStart {
                 System.err.println("Firebase read failed: " + error.getMessage());
             }
         });
-
+        SwingUtilities.invokeLater(() -> {
         System.out.println("Opening file chooser...");
         // Prompt the user to select a CSV file via file chooser
         JFileChooser fileChooser = new JFileChooser();
@@ -94,6 +94,7 @@ public class NewStart {
                 e.printStackTrace();
             }
         }
+        });
 
         // Add the contacts to Firebase
         DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference("people");

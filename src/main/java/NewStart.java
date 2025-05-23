@@ -25,9 +25,13 @@ import com.opencsv.CSVWriter;
 
 public class NewStart {
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
+    public static HashMap<String, Person> emailsToExport = new HashMap<>();
+
     public static ArrayList<Person> peopleToCSV = new ArrayList<>();
-    public static ArrayList<String> emails = new ArrayList<>(); // emails in the database --> avoid duplicates
+    public static ArrayList<String> databaseEmails = new ArrayList<>(); // emails in the database --> avoid duplicates
+    public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
+
     private static CountDownLatch latch = new CountDownLatch(1);
 
     // Instantiate STATE MACHINE because the firebase in async but the file processing is sync
@@ -71,13 +75,14 @@ public class NewStart {
                         Person person = child.getValue(Person.class);
 
                         // Check if duplicate email
-                        if (emails.contains(person.getEmail())) {
+                        if (databaseEmails.contains(person.getEmail())) {
                             System.out.println("- Person with email: " + person.getEmail() + " already exists in the database.");
                         
                         // Check if person is valid
                         } else if (person != null) {
                             peopleToCSV.add(person);
-                            emails.add(person.getEmail());
+                            emailsToExport.put(person.getEmail(), person);
+                            databaseEmails.add(person.getEmail());
                             
                             System.out.println("+ Fetched person: " + person.getEmail() + ", " + person.getFirstName() + " " + person.getLastName());
                         }
@@ -153,14 +158,19 @@ public class NewStart {
                     // Skip if the person is null
                     if (person == null) continue;
 
+                    if (emailsToExport.keySet().contains(person.getEmail())) {
+                        emailsToExport.remove(person.getEmail());
+                        System.out.println("> Person with email: " + person.getEmail() + " already exists in the user's contacts.");
+                    }
+
                     // Check if duplicate email
-                    if (emails.contains(person.getEmail())) {
+                    if (databaseEmails.contains(person.getEmail())) {
                         System.out.println("- Person with email: " + person.getEmail() + " already exists in the database.");
                     
                     // Check if the email ends with @lbschools.net
                     } else if (person.getEmail().endsWith("@lbschools.net")) {
                         newPeople.add(person);
-                        emails.add(person.getEmail());
+                        databaseEmails.add(person.getEmail());
 
                         System.out.println("+ Adding person with email: " + person.getEmail());
                     }
@@ -168,7 +178,7 @@ public class NewStart {
 
                 // Set the current state to PROCESSING_CSV after reading the file
                 currentState = State.PUSH;
-                System.out.println("CSV file read successfully. Number of people: " + peopleToCSV.size());
+                System.out.println("CSV file read successfully. Number of people: " + emailsToExport.size());
                 handleState(currentState);
             } catch (Exception e) {
                 System.out.println("Something went wrong while reading the CSV file.");
@@ -196,7 +206,7 @@ public class NewStart {
          * CSV DOWNLOADED
          */
         case DONE:
-            createCSV(peopleToCSV);
+            createCSV(new ArrayList<>(emailsToExport.values()));
             System.out.println("Done.");
             latch.countDown();
             break;

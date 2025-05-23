@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+//This file was made by Jiyan
 public class contAdderUI extends JFrame{
   public contAdderUI()
   {
@@ -16,11 +17,15 @@ public class contAdderUI extends JFrame{
     String[] options = {"CAMS"};
     ImageIcon test = new ImageIcon("testImg.png");
 
+    //Containers of components
     JPanel home = new JPanel();
     JPanel instructions = new JPanel();
     JPanel conta1 = new JPanel();
+
+    //Drop-down (I only put CAMS)
     JComboBox schools = new JComboBox<>(options);
 
+    //Arrange drop down and steps vertically
     conta1.setLayout(new BoxLayout(conta1, BoxLayout.Y_AXIS));
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
 

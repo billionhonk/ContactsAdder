@@ -88,6 +88,16 @@ public class Person {
         return firstName + " " + middleName + " " + lastName;
     }
 
+    public boolean isDuplicatePerson(Person other) {
+        if (this.getFirstName() != other.getFirstName()) return false;
+        if (this.getMiddleName() != other.getMiddleName()) return false;
+        if (this.getLastName() != other.getLastName()) return false;
+        if (this.getEmail() != other.getEmail()) return false;
+        if (this.getNamePrefix() != other.getNamePrefix()) return false;
+        if (this.getNameSuffix() != other.getNameSuffix()) return false;
+        return true;
+    }
+
     //ToString method
     @Override
     public String toString() {

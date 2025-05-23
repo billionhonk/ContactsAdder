@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -25,7 +26,7 @@ import com.opencsv.CSVWriter;
 public class NewStart {
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
     public static ArrayList<Person> peopleToCSV = new ArrayList<>();
-    public static ArrayList<String> fullNames = new ArrayList<>(); // people in the database --> avoid duplicates
+    public static ArrayList<String> emails = new ArrayList<>(); // emails in the database --> avoid duplicates
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
     private static CountDownLatch latch = new CountDownLatch(1);
 
@@ -58,16 +59,20 @@ public class NewStart {
 
                 // Retrieve data from Firebase Realtime Database
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
+                emails = new ArrayList<>();
 
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             Person person = child.getValue(Person.class);
-                            if (person != null) {
+                            if (person != null && !emails.contains(person.getEmail())) {
+                                if (emails.contains(person.getEmail()))
+                                    System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
                                 peopleToCSV.add(person);
+
                                 // Add to fullNames to avoid duplicates.. subclass of Person --> FullName
-                                fullNames.add(person.getFirstName() + " " + person.getLastName());
+                                emails.add(person.getEmail());
                                 System.out.println("Fetched person: " + person.getEmail() + ", " + person.getFirstName() + " " + person.getLastName());
                             }
                         }
@@ -87,6 +92,7 @@ public class NewStart {
                 System.out.println("Awaiting file...");
                 SwingUtilities.invokeLater(() -> {
                     System.out.println("Opening file chooser...");
+
                     // Prompt the user to select a CSV file via file chooser
                     JFileChooser fileChooser = new JFileChooser();
                     System.out.println("File chooser opened.");
@@ -124,6 +130,8 @@ public class NewStart {
                 break;
             case PROCESSING_CSV:
                 System.out.println("Processing CSV...");
+                emails = new ArrayList<>();
+
                 try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
                             List<String[]> rows = reader.readAll();
                             for (String[] row : rows) {
@@ -136,27 +144,29 @@ public class NewStart {
 
                                 // Check if the email ends with @lbschools.net 
                                 // TODO: check if the email is already in the arraylist
-                                if (person.getEmail().endsWith("@lbschools.net") && !peopleToCSV.contains(person)) {
+                                if (person.getEmail().endsWith("@lbschools.net") && !emails.contains(person.getEmail())) {
                                     // nested for loop to check if the person is already in the arraylist
-                                    boolean alreadyExists = false;
-                                    for (Person p : peopleToCSV) {
-                                        if (p.getEmail().equals(person.getEmail())) {
-                                            System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
-                                            alreadyExists = true;
+                                    // boolean alreadyExists = false;
+                                    // for (Person p : peopleToCSV) {
+                                    //     if (p.getEmail().equals(person.getEmail())) {
+                                    //         System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
+                                    //         alreadyExists = true;
 
-                                            // Remove from peopleToCSV to avoid duplicates
-                                            for (int i = 0; i < peopleToCSV.size(); i++) {
-                                                if (peopleToCSV.get(i).getEmail().equals(person.getEmail())) {
-                                                    peopleToCSV.remove(i);
-                                                    System.out.println("Removed " + person.toString());
-                                                    break;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
+                                    //         // Remove from peopleToCSV to avoid duplicates
+                                    //         for (int i = 0; i < peopleToCSV.size(); i++) {
+                                    //             if (peopleToCSV.get(i).getEmail().equals(person.getEmail())) {
+                                    //                 peopleToCSV.remove(i);
+                                    //                 System.out.println("Removed " + person.toString());
+                                    //                 break;
+                                    //             }
+                                    //         }
+                                    //         break;
+                                    //     }
+                                    // }
 
-                                    if (!alreadyExists) {
+                                    if (emails.contains(person.getEmail())) {
+                                        System.out.println("Person with email: " + person.getEmail() + " already exists in the database.");
+                                    } else {
                                         // add person to the arraylist
                                         System.out.println("Adding person with email: " + person.getEmail());
                                         

@@ -29,16 +29,16 @@ public class contAdderUI extends JFrame{
     conta1.setLayout(new BoxLayout(conta1, BoxLayout.Y_AXIS));
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
 
-    JLabel step1 = new JLabel("1)yada yada yada");
-    JLabel step2 = new JLabel("2)aaaaaaaaaaa");
-    JLabel step3 = new JLabel("3)fuck");
+    JLabel step1 = new JLabel("1)Press upload button");
+    JLabel step2 = new JLabel("2)Choose folder");
+    JLabel step3 = new JLabel("3)[add]");
     JButton upbtn = new JButton("Upload");
     JButton dwbtn = new JButton("Download");
 
     upbtn.addActionListener(new ActionListener() {
       @Override
-      public void actionPerformed(ActionEvent evt) {
-        System.out.println("UPbtn pressed");
+      public void actionPerformed(ActionEvent evt) throws InterruptedException {
+        NewStart.handleState(NewStart.currentState);
       }
     });
     

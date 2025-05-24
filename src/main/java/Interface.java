@@ -10,29 +10,29 @@ public class Interface extends JFrame {
     setFocusable(true);
   }
 
-  public void createInterFace() {
+  public void createInterface() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1000, 1000);
-    // ImageIcon test = new ImageIcon("testImg.png");
 
     // Containers of components
     JPanel home = new JPanel();
+    
     JPanel instructions = new JPanel();
-    JPanel conta1 = new JPanel();
 
-    // Drop-down (I only put CAMS)
     String[] options = {"CAMS"};
-    JComboBox<String> schools = new JComboBox<>(options);
+    JComboBox<String> schools = new JComboBox<>(options); // Dropdown menu
+
+    JLabel gif = new JLabel(new ImageIcon("output.gif"));
+    gif.setSize(50,50);
 
     // Arrange drop down and steps vertically
-    conta1.setLayout(new BoxLayout(conta1, BoxLayout.Y_AXIS));
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
 
     JLabel step1 = new JLabel("1) Press upload button");
     JLabel step2 = new JLabel("2) Choose Contacts .csv to upload");
     JLabel step3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
+    
     JButton upbtn = new JButton("Run!");
-    // JButton dwbtn = new JButton("Download");
 
     upbtn.addActionListener(new ActionListener() {
       @Override
@@ -41,6 +41,8 @@ public class Interface extends JFrame {
         Handler.handleState(Handler.currentState);
       }
     });
+
+    // JButton dwbtn = new JButton("Download");
     
     // dwbtn.addActionListener(new ActionListener() {
     //   @Override
@@ -49,33 +51,29 @@ public class Interface extends JFrame {
     //   }
     // });
 
+    home.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+    instructions.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+
     instructions.add(step1);
     instructions.add(step2);
     instructions.add(step3);
-    instructions.add(upbtn);
-    // instructions.add(dwbtn);
-
-    conta1.add(instructions);
-    conta1.add(schools);
-
-    // JLabel gif = new JLabel(test);
-    // gif.setSize(100,100);
     
-    // home.add(gif);
-    home.add(conta1);
+    home.add(instructions);
+    home.add(upbtn);
+    home.add(schools);
+    home.add(gif);
     
     Container pane = getContentPane();
-    pane.add(home,  BorderLayout.PAGE_START);
+    pane.add(home, BorderLayout.PAGE_START);
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation(dim.width/2 - 100, dim.height/2 - 100);
+    setLocation(dim.width/2, dim.height/2);
     pack();
     setVisible(true);
-    // gif.setVisible(false);
   }
 
   public static void main(String[] args) {
     Interface contAdder = new Interface();
-    contAdder.createInterFace();
+    contAdder.createInterface();
   }
 }
 

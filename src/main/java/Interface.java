@@ -3,36 +3,38 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.google.protobuf.Empty;
-
 import org.checkerframework.checker.guieffect.qual.UI;
 
-// Made by Jiyan and edited by William
+// Frontend of application
 // INHERITANCE: extends from JFrame to create a GUI window
+// Written by Jiyan and edited by William
 public class Interface extends JFrame {
+  // Public components to be accessed and modified in Handler
   public JPanel boxInst;
   public JPanel boxDone;
-  public JButton btnRun;
 
+  public JButton btnRun;
   public JLabel gif;
 
   public String school;
 
+  // Initialize interface
   public Interface() {
     super();
     setResizable(true);
     setFocusable(true);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setSize(100, 100);
   }
 
+  // Create, add, and format all components to screen
   public void createInterface() {
+    // Change label, button, and dropdown menu font
     UIManager.put("Label.font", new Font("Arial", Font.PLAIN, 14));
     UIManager.put("Button.font", new Font("Arial", Font.PLAIN, 14));
     UIManager.put("ComboBox.font", new Font("Arial", Font.PLAIN, 14));
 
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(100, 100);
-
-    // Create containers
+    // Create panels and components
     JPanel boxHome = new JPanel();
     boxHome.setLayout(new BoxLayout(boxHome, BoxLayout.Y_AXIS));
     boxHome.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -56,7 +58,6 @@ public class Interface extends JFrame {
     JLabel lblDone1 = new JLabel("Contacts successfully imported! Check the project folder for your contacts");
     JLabel lblDone2 = new JLabel(".csv file. The GIF below has been updated with further instructions.");
     
-    // Create components
     String[] schools = {"CAMS", "Browning", "EPHS", "McBride", "Jordan", "Cabrillo", "Lakewood", "Poly", "LBSA", "Millikan", "Renaissance", "Sato", "Reid", "Wilson"};
     school = schools[0];
     JComboBox<String> ddMenu = new JComboBox<>(schools); // Dropdown menu
@@ -66,7 +67,7 @@ public class Interface extends JFrame {
     gif = new JLabel(new ImageIcon("src/main/assets/download.gif"));
     gif.setSize(50,50);
 
-    // Add components and containers
+    // Add components to panels
     boxInst.add(lblStep1);
     boxInst.add(lblStep2);
     boxInst.add(lblStep3);
@@ -100,11 +101,12 @@ public class Interface extends JFrame {
       }
     });
     
-    // Add containers to window
+    // Add panels to window
     Container pane = getContentPane();
     pane.add(boxHome, BorderLayout.PAGE_START);
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(dim.width/2, dim.height/2);
+
     pack();
     setVisible(true);
   }

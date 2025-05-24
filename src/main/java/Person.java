@@ -1,6 +1,10 @@
+/* 
+ * Person object for handling contacts (name information and email)
+ * Necessary for Firebase database, creation of CSV for contacts
+ */
 public class Person {
-    // Set nonmandatory fields to empty string
-    // to avoid null pointer exceptions
+    // Set nonmandatory fields to empty string to avoid null pointer exceptions
+    // Use encapsulation for all fields
     private String firstName;
     private String middleName = "";
     private String lastName;
@@ -8,9 +12,8 @@ public class Person {
     private String namePrefix = "";
     private String nameSuffix = "";
 
-    /** No-arg constructor for Firebase */
+    /** No-arg constructor required by Firebase */
     public Person() {
-        // Default constructor for Firebase
     }
 
     // Constructors with overloading
@@ -36,6 +39,7 @@ public class Person {
         this.email = email;
     }
 
+    // Getters
     public String getFirstName() { return firstName; }
     public String getMiddleName() { return middleName; }
     public String getLastName() { return lastName; }
@@ -45,7 +49,7 @@ public class Person {
     public String getNamePrefix() { return namePrefix; }
     public String getNameSuffix() { return nameSuffix; }
 
-
+    // Setters
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setMiddleName(String middleName) { this.middleName = middleName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -55,10 +59,12 @@ public class Person {
     public void setNamePrefix(String namePrefix) { this.namePrefix = namePrefix; }
     public void setNameSuffix(String nameSuffix) { this.nameSuffix = nameSuffix; }
 
+    // Method to get full name 
     public String getFullName() {
         return firstName + " " + middleName + " " + lastName;
     }
 
+    // Method to check if two Person objects are duplicates
     public boolean isDuplicatePerson(Person other) {
         if (this.getFirstName() != other.getFirstName()) return false;
         if (this.getMiddleName() != other.getMiddleName()) return false;

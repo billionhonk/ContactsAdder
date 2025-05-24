@@ -18,6 +18,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 //This file was made by Jiyan
+// INHERITANCE: extends from JFrame to create a GUI window
 public class Interface extends JFrame {
   public Interface() {
     super();

@@ -22,6 +22,9 @@ import com.opencsv.CSVWriter;
 // Backend of application
 // Written by Owen and William
 public class Handler {
+    // Create an Interface in the Handler class
+    public static Interface app = new Interface();
+
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
     // Might be slightly redundant but ensures that we have a unique list of emails
     public static HashMap<String, Person> emailsToExport = new HashMap<>();
@@ -32,7 +35,7 @@ public class Handler {
     public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has (from uploaded CSV)
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
 
-    public static CountDownLatch latch = new CountDownLatch(1);
+    // public static CountDownLatch latch = new CountDownLatch(1); // latch to 
 
     // Instantiate our STATE MACHINE because the firebase in async but the file processing is sync 
     // Prevents instant jumps (and prevents the program from not working)
@@ -225,7 +228,15 @@ public class Handler {
             case DONE:
                 createCSV(new ArrayList<>(emailsToExport.values()));
                 System.out.println("Done.");
-                latch.countDown(); // Count down the latch to signal that the process is complete 
+
+                app.boxInst.setVisible(false);
+                app.btnRun.setVisible(false);
+                app.boxDone.setVisible(true);
+                app.pack();
+
+                app.gif.setIcon(new ImageIcon("src/main/assets/upload.gif"));
+
+                // latch.countDown(); // Count down the latch to signal that the process is complete 
                 break;
         }
     }
@@ -283,5 +294,10 @@ public class Handler {
             System.out.println("Failed to open CSV file: " + e.getMessage());
         }
 
+    }
+
+    // Main method to create interface
+    public static void main(String[] args) {
+        Handler.app.createInterface();
     }
 }

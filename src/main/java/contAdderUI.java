@@ -38,7 +38,9 @@ public class contAdderUI extends JFrame{
     upbtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) throws InterruptedException {
+        System.out.println("UPbtn pressed");
         NewStart.handleState(NewStart.currentState);
+        latch.await();
       }
     });
     

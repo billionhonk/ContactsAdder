@@ -48,41 +48,41 @@ import java.util.HashMap;
 
 import com.google.firebase.database.*;
 
-// Use countdownlatch to wait for firebase to load
+// Use countdownlatch to wait for firebase to load (currently unused)
 // Ensure we don't jump (due to Firebase being async) until after the people have been fetched
-import java.util.concurrent.CountDownLatch;
+// import java.util.concurrent.CountDownLatch;
 
 import java.awt.Desktop;
 import java.io.FileWriter;
 import com.opencsv.CSVWriter;
 
-// STATE MACHINE to handle accessing Firebase, reading CSV, and writing to Firebase
+// State Machine to handle accessing Firebase, reading CSV, and writing to Firebase
 // Backend of application
-// Written by Owen and William
+// Written by Owen and edited by William
 public class Handler {
     // Create an Interface in the Handler class
     public static Interface app = new Interface();
 
-    // Create an arraylist of Person objects to store the contacts as they are created/loaded
+    // Create a HashMap (unique keys) of Person objects to store the contacts as they are created/loaded
     // Might be slightly redundant but ensures that we have a unique list of emails
     public static HashMap<String, Person> emailsToExport = new HashMap<>();
 
-    // Person objects to export to CSV (new contacts) --> import to user's Google Contacts
+    // ARRAYLISTS: Person objects to export to CSV (new contacts) --> import to user's Google Contacts
     public static ArrayList<Person> peopleToCSV = new ArrayList<>();
     public static ArrayList<String> databaseEmails = new ArrayList<>(); // emails in the database --> avoid duplicates
     public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has (from uploaded CSV)
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
 
-    // public static CountDownLatch latch = new CountDownLatch(1); // latch to 
+    // public static CountDownLatch latch = new CountDownLatch(1); // latch to keep project running until done
 
     // Instantiate our STATE MACHINE because the firebase in async but the file processing is sync 
     // Prevents instant jumps (and prevents the program from not working)
     enum State {
         FETCH, AWAITING_FILE, PROCESSING_CSV, PUSH, DONE
     }
-    public static State currentState = State.FETCH;
+    public static State currentState;
 
-    // File to store the CSV file that the user uploads
+    // VARIABLES: File to store the CSV file that the user uploads
     static File csvFile;
 
     // This is commented out because we added the Interface - no longer necessary
@@ -117,10 +117,12 @@ public class Handler {
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+                        // LOOPS: Iterates through Firebase data entries
                         for (DataSnapshot child : snapshot.getChildren()) {
                             Person person = child.getValue(Person.class);
 
                             // Check if duplicate email
+                            // NESTED ITERATIONS: contains() method uses iteration, which is in a for loop
                             if (databaseEmails.contains(person.getEmail())) {
                                 System.out.println("- Person with email: " + person.getEmail() + " already exists in the database.");
                             
@@ -206,7 +208,7 @@ public class Handler {
                     // Go row-by-row and create Person objects
                     List<String[]> rows = reader.readAll();
 
-                    // Enahnced for loop - don't need to use index
+                    // Enhanced for loop - don't need to use index
                     for (String[] row : rows) {
                         // Create Person object from the CSV row
                         Person person = createPersonFromCSVRow(row);

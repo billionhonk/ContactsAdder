@@ -4,7 +4,7 @@
  */
 public class Person {
     // Set nonmandatory fields to empty string to avoid null pointer exceptions
-    // Use encapsulation for all fields
+    // ENCAPSULATION: All instance variables are private
     private String firstName;
     private String middleName = "";
     private String lastName;
@@ -12,11 +12,11 @@ public class Person {
     private String namePrefix = "";
     private String nameSuffix = "";
 
-    /** No-arg constructor required by Firebase */
+    // No-arg constructor required by Firebase
     public Person() {
     }
 
-    // Constructors with overloading
+    // CONSTRUCTORS: Instance variable initialization with overloading
     public Person(String firstName, String middleName, String lastName, String email, String namePrefix, String nameSuffix) {
         this.firstName = firstName;
         this.middleName = middleName;
@@ -75,7 +75,7 @@ public class Person {
         return true;
     }
 
-    // ToString method
+    // TOSTRING: Overridden method from Object class
     @Override
     public String toString() {
         return namePrefix + " " + firstName + " " + middleName + " " + lastName + " " + nameSuffix + 

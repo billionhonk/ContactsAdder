@@ -2,6 +2,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.checkerframework.checker.guieffect.qual.UI;
+
+import java.awt.GraphicsEnvironment;
+
 //This file was made by Jiyan
 public class Interface extends JFrame {
   public Interface() {
@@ -11,6 +15,10 @@ public class Interface extends JFrame {
   }
 
   public void createInterface() {
+    UIManager.put("Label.font", new Font("Arial", Font.PLAIN, 14));
+    UIManager.put("Button.font", new Font("Arial", Font.PLAIN, 14));
+    UIManager.put("ComboBox.font", new Font("Arial", Font.PLAIN, 14));
+
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(100, 100);
 
@@ -23,7 +31,7 @@ public class Interface extends JFrame {
     JPanel instructions = new JPanel();
     instructions.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    String[] options = {"CAMS"};
+    String[] options = {"CAMS", "Browning", "EPHS", "McBride", "Jordan", "Cabrillo", "Lakewood", "Poly", "LBSA", "Millikan", "Renaissance", "Sato", "Reid", "Wilson"};
     JComboBox<String> schools = new JComboBox<>(options); // Dropdown menu
 
     JLabel gif = new JLabel(new ImageIcon("src/main/assets/upload.gif"));

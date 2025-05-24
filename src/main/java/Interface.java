@@ -10,7 +10,7 @@ public class Interface extends JFrame {
     setFocusable(true);
   }
 
-  public void createInterFace(){
+  public void createInterFace() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1000, 1000);
     // ImageIcon test = new ImageIcon("testImg.png");
@@ -29,10 +29,10 @@ public class Interface extends JFrame {
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
 
     JLabel step1 = new JLabel("1) Press upload button");
-    JLabel step2 = new JLabel("2) Choose folder");
-    JLabel step3 = new JLabel("3) (placeholder)");
-    JButton upbtn = new JButton("Upload");
-    JButton dwbtn = new JButton("Download");
+    JLabel step2 = new JLabel("2) Choose Contacts .csv to upload");
+    JLabel step3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
+    JButton upbtn = new JButton("Run!");
+    // JButton dwbtn = new JButton("Download");
 
     upbtn.addActionListener(new ActionListener() {
       @Override
@@ -42,18 +42,18 @@ public class Interface extends JFrame {
       }
     });
     
-    dwbtn.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        System.out.println("DOWNbtn pressed");
-      }
-    });
+    // dwbtn.addActionListener(new ActionListener() {
+    //   @Override
+    //   public void actionPerformed(ActionEvent evt) {
+    //     System.out.println("DOWNbtn pressed");
+    //   }
+    // });
 
     instructions.add(step1);
     instructions.add(step2);
     instructions.add(step3);
     instructions.add(upbtn);
-    instructions.add(dwbtn);
+    // instructions.add(dwbtn);
 
     conta1.add(instructions);
     conta1.add(schools);

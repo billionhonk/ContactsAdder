@@ -1,3 +1,41 @@
+/*=============================================================================
+ |   Assignment:  White Tower Project
+ |       Author:  Owen, William, Jiyan
+ |        Period: 1
+ |
+ |  Course Name:  AP Computer Science A
+ |   Instructor:  Mr. Jonathan Virak
+ |     Due Date:  5/23/25 @ 11:59 PM
+ |
+ |      Purpose:  The purpose of the program is to address a collaboration
+ |                inconvenience within Google apps in LBUSD, after a change on
+ |                the district's end that led to students not being able to
+ |                search for each other by name when using the Share function
+ |                in Google products like Google Docs, Sheets, Drive, etc.
+ |                Instead of having to add other student's emails manually (a
+ |                24-digit email), we seek to automate this process by creating
+ |                a program that centralizes emails with student names,
+ |                allowing users to easily import contacts into their Google
+ |                Contacts. This will significantly reduce the time and effort
+ |                required to share documents with classmates, especially in
+ |                large groups (like IDP!) and when collaborating with students
+ |                who have not previously collaborated. This application allows
+ |                users to upload contacts (via .csv file exported from Google
+ |                Contacts) from their Contacts into a centralized Firebase
+ |                database and retrieve the contacts that they do not have in
+ |                their Contacts as a .csv file. This file can then be imported
+ |                into their Google Contacts, allowing them to share documents
+ |                with other students by name instead of having to manually
+ |                enter their 24-digit email addresses. Additionally, the app
+ |                is designed to be able to used across multiple schools in the
+ |                district, where users only see contacts from their own
+ |                school, and not from other schools.
+ |
+ |     Language:  Java
+ |                
+ | Deficiencies:  No known deficiencies.
+ *===========================================================================*/
+
 import com.opencsv.CSVReader;
 import javax.swing.*;
 

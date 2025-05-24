@@ -12,28 +12,41 @@ public class Interface extends JFrame {
 
   public void createInterface() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(1000, 1000);
+    setSize(100, 100);
 
     // Containers of components
     JPanel home = new JPanel();
+    home.setAlignmentX(Component.LEFT_ALIGNMENT);
     
+
+
     JPanel instructions = new JPanel();
+    instructions.setAlignmentX(Component.LEFT_ALIGNMENT);
 
     String[] options = {"CAMS"};
     JComboBox<String> schools = new JComboBox<>(options); // Dropdown menu
 
-    JLabel gif = new JLabel(new ImageIcon("output.gif"));
+    JLabel gif = new JLabel(new ImageIcon("src/main/assets/upload.gif"));
     gif.setSize(50,50);
-
+    
     // Arrange drop down and steps vertically
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
-
+    
     JLabel step1 = new JLabel("1) Press upload button");
     JLabel step2 = new JLabel("2) Choose Contacts .csv to upload");
     JLabel step3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
     
+    instructions.add(step1);
+    instructions.add(step2);
+    instructions.add(step3);
+    
     JButton upbtn = new JButton("Run!");
 
+    home.add(instructions);
+    home.add(schools);
+    home.add(upbtn);
+    home.add(gif);
+    
     upbtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -41,28 +54,16 @@ public class Interface extends JFrame {
         Handler.handleState(Handler.currentState);
       }
     });
-
+    
     // JButton dwbtn = new JButton("Download");
     
     // dwbtn.addActionListener(new ActionListener() {
-    //   @Override
-    //   public void actionPerformed(ActionEvent evt) {
-    //     System.out.println("DOWNbtn pressed");
-    //   }
-    // });
-
-    home.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-    instructions.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-
-    instructions.add(step1);
-    instructions.add(step2);
-    instructions.add(step3);
-    
-    home.add(instructions);
-    home.add(upbtn);
-    home.add(schools);
-    home.add(gif);
-    
+    //     @Override
+    //     public void actionPerformed(ActionEvent evt) {
+    //         System.out.println("DOWNbtn pressed");
+    //       }
+    //     });
+        
     Container pane = getContentPane();
     pane.add(home, BorderLayout.PAGE_START);
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -70,7 +71,7 @@ public class Interface extends JFrame {
     pack();
     setVisible(true);
   }
-
+      
   public static void main(String[] args) {
     Interface contAdder = new Interface();
     contAdder.createInterface();

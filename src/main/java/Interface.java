@@ -3,9 +3,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 //This file was made by Jiyan
-public class contAdderUI extends JFrame{
-  public contAdderUI()
-  {
+public class Interface extends JFrame {
+  public Interface() {
     super();
     setResizable(true);
     setFocusable(true);
@@ -14,33 +13,32 @@ public class contAdderUI extends JFrame{
   public void createInterFace(){
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1000, 1000);
-    String[] options = {"CAMS"};
-    //ImageIcon test = new ImageIcon("testImg.png");
+    // ImageIcon test = new ImageIcon("testImg.png");
 
-    //Containers of components
+    // Containers of components
     JPanel home = new JPanel();
     JPanel instructions = new JPanel();
     JPanel conta1 = new JPanel();
 
-    //Drop-down (I only put CAMS)
-    JComboBox schools = new JComboBox<>(options);
+    // Drop-down (I only put CAMS)
+    String[] options = {"CAMS"};
+    JComboBox<String> schools = new JComboBox<>(options);
 
-    //Arrange drop down and steps vertically
+    // Arrange drop down and steps vertically
     conta1.setLayout(new BoxLayout(conta1, BoxLayout.Y_AXIS));
     instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
 
-    JLabel step1 = new JLabel("1)Press upload button");
-    JLabel step2 = new JLabel("2)Choose folder");
-    JLabel step3 = new JLabel("3)[add]");
+    JLabel step1 = new JLabel("1) Press upload button");
+    JLabel step2 = new JLabel("2) Choose folder");
+    JLabel step3 = new JLabel("3) (placeholder)");
     JButton upbtn = new JButton("Upload");
     JButton dwbtn = new JButton("Download");
 
     upbtn.addActionListener(new ActionListener() {
       @Override
-      public void actionPerformed(ActionEvent evt) throws InterruptedException {
+      public void actionPerformed(ActionEvent evt) {
         System.out.println("UPbtn pressed");
-        NewStart.handleState(NewStart.currentState);
-        latch.await();
+        Handler.handleState(Handler.currentState);
       }
     });
     
@@ -60,10 +58,10 @@ public class contAdderUI extends JFrame{
     conta1.add(instructions);
     conta1.add(schools);
 
-    //JLabel gif = new JLabel(test);
-    //gif.setSize(100,100);
+    // JLabel gif = new JLabel(test);
+    // gif.setSize(100,100);
     
-    //home.add(gif);
+    // home.add(gif);
     home.add(conta1);
     
     Container pane = getContentPane();
@@ -72,13 +70,12 @@ public class contAdderUI extends JFrame{
     setLocation(dim.width/2 - 100, dim.height/2 - 100);
     pack();
     setVisible(true);
-    //gif.setVisible(false);
+    // gif.setVisible(false);
+  }
+
+  public static void main(String[] args) {
+    Interface contAdder = new Interface();
+    contAdder.createInterFace();
   }
 }
 
-class test{
-  public static void main(String[] args) {
-      contAdderUI contAdder = new contAdderUI();
-      contAdder.createInterFace();
-  }
-}

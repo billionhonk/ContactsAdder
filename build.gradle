@@ -7,7 +7,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'NewStart'
+mainClassName = 'contAdderUI'
 sourceCompatibility = 11
 targetCompatibility = 11
 

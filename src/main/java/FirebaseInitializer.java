@@ -12,6 +12,7 @@ public class FirebaseInitializer {
     public static void initialize() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             // Use environment variable for service account JSON
+            // export GOOGLE_APPLICATION_CREDENTIALS="tokens/key.json"
             String serviceAccountJson = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
             if (serviceAccountJson == null || serviceAccountJson.isEmpty()) {
                 throw new IllegalStateException("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set or empty.");

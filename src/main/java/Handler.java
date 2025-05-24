@@ -23,7 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import com.opencsv.CSVWriter;
 
-public class NewStart {
+public class Handler {
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
     public static HashMap<String, Person> emailsToExport = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class NewStart {
     public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
 
-    private static CountDownLatch latch = new CountDownLatch(1);
+    public static CountDownLatch latch = new CountDownLatch(1);
 
     // Instantiate STATE MACHINE because the firebase in async but the file processing is sync
     // This is annoying
@@ -45,10 +45,10 @@ public class NewStart {
 
     // change from main to throws InterruptedException to let latch work
     // interrupted exception is thrown when the thread is interrupted
-    public static void main(String[] args) throws InterruptedException {
-        handleState(State.FETCH);
-        latch.await(); // Wait for Firebase to load
-    }
+    // public static void main(String[] args) throws InterruptedException {
+    //     handleState(State.FETCH);
+    //     latch.await(); // Program keeps running until counted down
+    // }
 
     public static void handleState(State state) {
         switch (state) {
@@ -67,7 +67,7 @@ public class NewStart {
 
             // Retrieve data from Firebase Realtime Database
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
-
+            
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -193,7 +193,7 @@ public class NewStart {
             System.out.println("Uploading...");
             DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference("people");
             // Add each person to the Firebase Realtime Database
-            for (Person person: newPeople) {
+            for (Person person : newPeople) {
                 peopleFB.push().setValueAsync(person);
                 System.out.println("Added person to Firebase: " + person.getEmail());
             }

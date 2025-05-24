@@ -8,7 +8,7 @@ public class Person {
     private String namePrefix = "";
     private String nameSuffix = "";
 
-    // No-arg constructor for Firebase
+    /** No-arg constructor for Firebase */
     public Person() {
         // Default constructor for Firebase
     }
@@ -29,60 +29,31 @@ public class Person {
         this.email = email;
     }
 
-    public Person(String firstName, String midelName, String lastName, String email) {
+    public Person(String firstName, String middleName, String lastName, String email) {
         this.firstName = firstName;
-        this.middleName = midelName;
-        this.lastName = lastName;
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNamePrefix() {
-        return namePrefix;
-    }
-
-    public String getNameSuffix() {
-        return nameSuffix;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setMiddleName(String middleName) {
         this.middleName = middleName;
-    }
-
-    public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setNamePrefix(String namePrefix) {
-        this.namePrefix = namePrefix;
-    }
+    public String getFirstName() { return firstName; }
+    public String getMiddleName() { return middleName; }
+    public String getLastName() { return lastName; }
 
-    public void setNameSuffix(String nameSuffix) {
-        this.nameSuffix = nameSuffix;
-    }
+    public String getEmail() { return email; }
+
+    public String getNamePrefix() { return namePrefix; }
+    public String getNameSuffix() { return nameSuffix; }
+
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setMiddleName(String middleName) { this.middleName = middleName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    public void setNamePrefix(String namePrefix) { this.namePrefix = namePrefix; }
+    public void setNameSuffix(String nameSuffix) { this.nameSuffix = nameSuffix; }
 
     public String getFullName() {
         return firstName + " " + middleName + " " + lastName;
@@ -98,10 +69,10 @@ public class Person {
         return true;
     }
 
-    //ToString method
+    // ToString method
     @Override
     public String toString() {
         return namePrefix + " " + firstName + " " + middleName + " " + lastName + " " + nameSuffix + 
-                "| Email: " + email;
+               "| Email: " + email;
     }
 }

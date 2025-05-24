@@ -24,6 +24,8 @@ import java.io.IOException;
 import com.opencsv.CSVWriter;
 
 public class Handler {
+    public static Interface app = new Interface();
+
     // Create an arraylist of Person objects to store the contacts as they are created/loaded
     public static HashMap<String, Person> emailsToExport = new HashMap<>();
 
@@ -32,7 +34,7 @@ public class Handler {
     public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
 
-    public static CountDownLatch latch = new CountDownLatch(1);
+    // public static CountDownLatch latch = new CountDownLatch(1);
 
     // Instantiate STATE MACHINE because the firebase in async but the file processing is sync
     // This is annoying
@@ -67,7 +69,7 @@ public class Handler {
 
             // Retrieve data from Firebase Realtime Database
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
-            
+
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -122,7 +124,7 @@ public class Handler {
 
                 // Start at home directory
                 String userHome = System.getProperty("user.home");
-
+                
                 // Check if the OS is Mac to use Downloads (for greater convenience)
                 String os = System.getProperty("os.name").toLowerCase();
                 File initialDir;
@@ -208,7 +210,15 @@ public class Handler {
         case DONE:
             createCSV(new ArrayList<>(emailsToExport.values()));
             System.out.println("Done.");
-            latch.countDown();
+
+            app.boxInst.setVisible(false);
+            app.btnRun.setVisible(false);
+            app.boxDone.setVisible(true);
+            app.pack();
+
+            app.gif.setIcon(new ImageIcon("src/main/assets/upload.gif"));
+
+            // latch.countDown();
             break;
     }}
 
@@ -264,5 +274,9 @@ public class Handler {
             System.out.println("Failed to open CSV file: " + e.getMessage());
         }
 
+    }
+
+    public static void main(String[] args) {
+        Handler.app.createInterface();
     }
 }

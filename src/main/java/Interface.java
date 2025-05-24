@@ -1,13 +1,22 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+import com.google.protobuf.Empty;
 
 import org.checkerframework.checker.guieffect.qual.UI;
 
-import java.awt.GraphicsEnvironment;
-
 //This file was made by Jiyan
 public class Interface extends JFrame {
+  public JPanel boxInst;
+  public JPanel boxDone;
+  public JButton btnRun;
+
+  public JLabel gif;
+
+  public String school;
+
   public Interface() {
     super();
     setResizable(true);
@@ -22,67 +31,78 @@ public class Interface extends JFrame {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(100, 100);
 
-    // Containers of components
-    JPanel home = new JPanel();
-    home.setAlignmentX(Component.LEFT_ALIGNMENT);
+    // Create containers
+    JPanel boxHome = new JPanel();
+    boxHome.setLayout(new BoxLayout(boxHome, BoxLayout.Y_AXIS));
+    boxHome.setBorder(new EmptyBorder(10, 10, 10, 10));
+  
+    JPanel boxTop = new JPanel();
+    boxTop.setLayout(new BoxLayout(boxTop, BoxLayout.X_AXIS));
+    boxTop.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    boxInst = new JPanel();
+    boxInst.setLayout(new BoxLayout(boxInst, BoxLayout.Y_AXIS));
     
+    JLabel lblStep1 = new JLabel("1) Press upload button");
+    JLabel lblStep2 = new JLabel("2) Choose Contacts .csv to upload");
+    JLabel lblStep3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
 
+    boxDone = new JPanel();
+    boxDone.setLayout(new BoxLayout(boxDone, BoxLayout.X_AXIS));
 
-    JPanel instructions = new JPanel();
-    instructions.setAlignmentX(Component.LEFT_ALIGNMENT);
+    JLabel lblDone1 = new JLabel("Contacts successfully imported! Check the project folder for your contacts .csv file.");
+    JLabel lblDone2 = new JLabel("The GIF below has been updated with further instructions.");
+    
+    // Create components
+    String[] schools = {"CAMS", "Browning", "EPHS", "McBride", "Jordan", "Cabrillo", "Lakewood", "Poly", "LBSA", "Millikan", "Renaissance", "Sato", "Reid", "Wilson"};
+    school = schools[0];
+    JComboBox<String> ddMenu = new JComboBox<>(schools); // Dropdown menu
 
-    String[] options = {"CAMS", "Browning", "EPHS", "McBride", "Jordan", "Cabrillo", "Lakewood", "Poly", "LBSA", "Millikan", "Renaissance", "Sato", "Reid", "Wilson"};
-    JComboBox<String> schools = new JComboBox<>(options); // Dropdown menu
+    btnRun = new JButton("Run!");
 
-    JLabel gif = new JLabel(new ImageIcon("src/main/assets/upload.gif"));
+    gif = new JLabel(new ImageIcon("src/main/assets/download.gif"));
     gif.setSize(50,50);
-    
-    // Arrange drop down and steps vertically
-    instructions.setLayout(new BoxLayout(instructions, BoxLayout.Y_AXIS));
-    
-    JLabel step1 = new JLabel("1) Press upload button");
-    JLabel step2 = new JLabel("2) Choose Contacts .csv to upload");
-    JLabel step3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
-    
-    instructions.add(step1);
-    instructions.add(step2);
-    instructions.add(step3);
-    
-    JButton upbtn = new JButton("Run!");
 
-    home.add(instructions);
-    home.add(schools);
-    home.add(upbtn);
-    home.add(gif);
+    // Add components and containers
+    boxInst.add(lblStep1);
+    boxInst.add(lblStep2);
+    boxInst.add(lblStep3);
+
+    boxDone.add(lblDone1);
+    boxDone.add(lblDone2);
+
+    boxTop.add(boxInst);
+    boxTop.add(boxDone);
+    boxDone.setVisible(false);
+    boxTop.add(btnRun);
+    boxTop.add(ddMenu);
+
+    boxHome.add(boxTop);
+    boxHome.add(gif);
     
-    upbtn.addActionListener(new ActionListener() {
+    // Add button and menu functionality
+    btnRun.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
-        System.out.println("UPbtn pressed");
+        System.out.println("Run button pressed");
         Handler.handleState(Handler.currentState);
       }
     });
+
+    ddMenu.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        school = (String) ddMenu.getSelectedItem();
+        System.out.println("Selected school: " + school);
+      }
+    });
     
-    // JButton dwbtn = new JButton("Download");
-    
-    // dwbtn.addActionListener(new ActionListener() {
-    //     @Override
-    //     public void actionPerformed(ActionEvent evt) {
-    //         System.out.println("DOWNbtn pressed");
-    //       }
-    //     });
-        
+    // Add containers to window
     Container pane = getContentPane();
-    pane.add(home, BorderLayout.PAGE_START);
+    pane.add(boxHome, BorderLayout.PAGE_START);
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(dim.width/2, dim.height/2);
     pack();
     setVisible(true);
   }
-      
-  public static void main(String[] args) {
-    Interface contAdder = new Interface();
-    contAdder.createInterface();
-  }
 }
-

@@ -111,7 +111,7 @@ public class Handler {
                 }
 
                 // Retrieve data from Firebase Realtime Database
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("people");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference(Interface.school);
                 
                 // Listener to read data from Firebase
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -249,7 +249,7 @@ public class Handler {
             case PUSH:
                 System.out.println("Uploading...");
 
-                DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference("people");
+                DatabaseReference peopleFB = FirebaseDatabase.getInstance().getReference(Interface.school);
                 // Add each person to the Firebase Realtime Database
                 for (Person person : newPeople) {
                     peopleFB.push().setValueAsync(person);

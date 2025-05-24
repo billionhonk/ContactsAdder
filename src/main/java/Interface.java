@@ -16,7 +16,7 @@ public class Interface extends JFrame {
 
   public JLabel gif;
 
-  public String school;
+  public static String school = "CAMS"; 
 
   public Interface() {
     super();

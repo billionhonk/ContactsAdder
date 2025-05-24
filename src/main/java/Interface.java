@@ -46,8 +46,8 @@ public class Interface extends JFrame {
     boxInst.setLayout(new BoxLayout(boxInst, BoxLayout.Y_AXIS));
     boxInst.setBorder(new EmptyBorder(0, 0, 0, 10));
     
-    JLabel lblStep1 = new JLabel("1) Press run button");
-    JLabel lblStep2 = new JLabel("2) Choose contacts .csv to upload");
+    JLabel lblStep1 = new JLabel("1) Download your Google Contacts .csv file (see GIF)!");
+    JLabel lblStep2 = new JLabel("2) Click 'Run!' and select the .csv file from Contacts" );
     JLabel lblStep3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
 
     boxDone = new JPanel();

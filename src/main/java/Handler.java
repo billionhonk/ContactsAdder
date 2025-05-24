@@ -48,9 +48,9 @@ import java.util.HashMap;
 
 import com.google.firebase.database.*;
 
-// Use countdownlatch to wait for firebase to load
+// Use countdownlatch to wait for firebase to load (currently unused)
 // Ensure we don't jump (due to Firebase being async) until after the people have been fetched
-import java.util.concurrent.CountDownLatch;
+// import java.util.concurrent.CountDownLatch;
 
 import java.awt.Desktop;
 import java.io.FileWriter;
@@ -58,7 +58,7 @@ import com.opencsv.CSVWriter;
 
 // STATE MACHINE to handle accessing Firebase, reading CSV, and writing to Firebase
 // Backend of application
-// Written by Owen and William
+// Written by Owen and edited by William
 public class Handler {
     // Create an Interface in the Handler class
     public static Interface app = new Interface();
@@ -73,14 +73,14 @@ public class Handler {
     public static ArrayList<String> userEmails = new ArrayList<>(); // emails that the user has (from uploaded CSV)
     public static ArrayList<Person> newPeople = new ArrayList<>(); // people from the person's contacts
 
-    // public static CountDownLatch latch = new CountDownLatch(1); // latch to 
+    // public static CountDownLatch latch = new CountDownLatch(1); // latch to keep project running until done
 
     // Instantiate our STATE MACHINE because the firebase in async but the file processing is sync 
     // Prevents instant jumps (and prevents the program from not working)
     enum State {
         FETCH, AWAITING_FILE, PROCESSING_CSV, PUSH, DONE
     }
-    public static State currentState = State.FETCH;
+    public static State currentState;
 
     // File to store the CSV file that the user uploads
     static File csvFile;

@@ -7,7 +7,7 @@ import com.google.protobuf.Empty;
 
 import org.checkerframework.checker.guieffect.qual.UI;
 
-//This file was made by Jiyan
+// Made by Jiyan and edited by William
 // INHERITANCE: extends from JFrame to create a GUI window
 public class Interface extends JFrame {
   public JPanel boxInst;
@@ -44,9 +44,10 @@ public class Interface extends JFrame {
 
     boxInst = new JPanel();
     boxInst.setLayout(new BoxLayout(boxInst, BoxLayout.Y_AXIS));
+    boxInst.setBorder(new EmptyBorder(0, 0, 0, 10));
     
-    JLabel lblStep1 = new JLabel("1) Press upload button");
-    JLabel lblStep2 = new JLabel("2) Choose Contacts .csv to upload");
+    JLabel lblStep1 = new JLabel("1) Press run button");
+    JLabel lblStep2 = new JLabel("2) Choose contacts .csv to upload");
     JLabel lblStep3 = new JLabel("3) New contacts will be automatically downloaded as a .csv");
 
     boxDone = new JPanel();
@@ -87,7 +88,7 @@ public class Interface extends JFrame {
       @Override
       public void actionPerformed(ActionEvent evt) {
         System.out.println("Run button pressed");
-        Handler.handleState(Handler.currentState);
+        Handler.handleState(Handler.State.FETCH);
       }
     });
 
